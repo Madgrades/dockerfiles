@@ -1,0 +1,19 @@
+name: Deploy to prod
+on:
+  push:
+    branches: main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute deploy script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_KEY }}
+          script: |
+            cd ${{ secrets.PROD_PATH }}
+            git pull
+            ./deploy.sh
+          command_timeout: 60m
