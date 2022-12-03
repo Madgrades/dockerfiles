@@ -27,6 +27,9 @@ volumes:
   elasticsearch-data:
     external: true
     name: ${ELASTICSEARCH_DATA_VOLUME_NAME}
+  seed-data:
+    external: true
+    name: ${SEED_DATA_VOLUME_NAME}
 services:
   api:
     <<: *x-api
@@ -40,7 +43,18 @@ services:
     <<: *x-api
     command: .dockerfiles/run-seed.sh
     volumes:
-      - ${SEED_DATA_VOLUME_PATH}:/seed
+      - seed-data:/seed
+    depends_on:
+      database:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      fetch-seed-data:
+        condition: service_completed_successfully
+  fetch-seed-data:
+    image: ghcr.io/madgrades/madgrades-data@sha256:64a19975be69cc99f5984e9bbabe8f3b84dcfcf4079e7996a176c594cc702c4a
+    volumes:
+      - seed-data:/mnt
   database:
     image: mariadb
     command: --max_allowed_packet=160M --key_buffer_size=16M --max_binlog_size=100M
