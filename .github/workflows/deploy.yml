@@ -13,6 +13,7 @@ jobs:
           username: ${{ secrets.PROD_USERNAME }}
           key: ${{ secrets.PROD_KEY }}
           script: |
-            cd /home/madgrades/dockerfiles
+            cd ${{ secrets.PROD_PATH }}
+            git pull
             ./deploy.sh
           command_timeout: 60m
