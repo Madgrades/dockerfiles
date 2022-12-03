@@ -1,0 +1,18 @@
+name: Deploy to prod
+on:
+  push:
+    branches: deploy
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute deploy script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_KEY }}
+          script: |
+            cd /home/madgrades/dockerfiles
+            ./deploy.sh
+          command_timeout: 60m
