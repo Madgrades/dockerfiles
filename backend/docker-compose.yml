@@ -1,0 +1,66 @@
+version: "3.9"
+x-api:
+  &x-api
+  image: ghcr.io/madgrades/api.madgrades.com:latest
+  environment:
+    GITHUB_KEY: ${GITHUB_KEY}
+    GITHUB_SECRET: ${GITHUB_SECRET}
+    SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    DATABASE_USERNAME: ${MYSQL_USER}
+    DATABASE_PASSWORD: ${MYSQL_PASSWORD}
+    DATABASE_NAME: ${MYSQL_DATABASE}
+    DATABASE_HOST: database
+    DATABASE_PORT: 3306
+    PORT: ${PORT}
+    RAILS_LOG_TO_STDOUT: ${RAILS_LOG_TO_STDOUT}
+    RAILS_ENV: ${RAILS_ENV}
+  depends_on:
+    database:
+      condition: service_healthy
+    elasticsearch:
+      condition: service_healthy
+volumes:
+  elasticsearch-data: {}
+  mysql-data: {}
+services:
+  api:
+    <<: *x-api
+    command: .dockerfiles/run-api.sh
+    expose:
+      - ${PORT}
+  migrate:
+    <<: *x-api
+    command: .dockerfiles/run-migrations.sh
+  seed:
+    <<: *x-api
+    command: .dockerfiles/run-seed.sh
+    volumes:
+      - ${VOLUME_SEED_DATA}:/seed
+  database:
+    image: mariadb
+    command: --max_allowed_packet=160M --key_buffer_size=16M --max_binlog_size=100M
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -u${MYSQL_USER} -p${MYSQL_PASSWORD} >/dev/null || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 6
+  elasticsearch:
+    image: elasticsearch:6.8.22
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 6
