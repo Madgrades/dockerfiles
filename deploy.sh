@@ -25,6 +25,9 @@ else
   docker compose up seed
 fi
 
+echo "Stopping containers..."
 docker compose stop
+
+echo "Starting api..."
 docker compose up -d api
 echo "Done"

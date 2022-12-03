@@ -52,7 +52,7 @@ services:
       fetch-seed-data:
         condition: service_completed_successfully
   fetch-seed-data:
-    image: ghcr.io/madgrades/madgrades-data@sha256:64a19975be69cc99f5984e9bbabe8f3b84dcfcf4079e7996a176c594cc702c4a
+    image: ghcr.io/madgrades/madgrades-data:latest
     volumes:
       - seed-data:/mnt
   database:
