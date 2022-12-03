@@ -27,8 +27,8 @@ services:
   api:
     <<: *x-api
     command: .dockerfiles/run-api.sh
-    expose:
-      - ${PORT}
+    ports:
+      - '${PORT}:${PORT}'
   migrate:
     <<: *x-api
     command: .dockerfiles/run-migrations.sh
