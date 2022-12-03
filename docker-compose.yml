@@ -20,25 +20,14 @@ x-api:
       condition: service_healthy
     elasticsearch:
       condition: service_healthy
-volumes:
-  mysql-data:
-    external: true
-    name: ${MYSQL_DATA_VOLUME_NAME}
-  elasticsearch-data:
-    external: true
-    name: ${ELASTICSEARCH_DATA_VOLUME_NAME}
-  seed-data:
-    external: true
-    name: ${SEED_DATA_VOLUME_NAME}
 services:
-  api:
-    <<: *x-api
-    command: .dockerfiles/run-api.sh
-    ports:
-      - '${PORT}:${PORT}'
   migrate:
     <<: *x-api
     command: .dockerfiles/run-migrations.sh
+  fetch-seed-data:
+    image: ghcr.io/madgrades/madgrades-data@sha256:0eedc444b52e8e6d237192a1c7d526c759270faafa2c7da3c93ff7dcd31092f9
+    volumes:
+      - seed-data:/mnt
   seed:
     <<: *x-api
     command: .dockerfiles/run-seed.sh
@@ -51,10 +40,11 @@ services:
         condition: service_healthy
       fetch-seed-data:
         condition: service_completed_successfully
-  fetch-seed-data:
-    image: ghcr.io/madgrades/madgrades-data:latest
-    volumes:
-      - seed-data:/mnt
+  api:
+    <<: *x-api
+    command: .dockerfiles/run-api.sh
+    ports:
+      - '${PORT}:${PORT}'
   database:
     image: mariadb:10.0
     command: --max_allowed_packet=1G
@@ -82,3 +72,14 @@ services:
       interval: 10s
       timeout: 10s
       retries: 6
+
+volumes:
+  mysql-data:
+    external: true
+    name: ${MYSQL_DATA_VOLUME_NAME}
+  elasticsearch-data:
+    external: true
+    name: ${ELASTICSEARCH_DATA_VOLUME_NAME}
+  seed-data:
+    external: true
+    name: ${SEED_DATA_VOLUME_NAME}
