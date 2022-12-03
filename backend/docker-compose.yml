@@ -21,8 +21,12 @@ x-api:
     elasticsearch:
       condition: service_healthy
 volumes:
-  elasticsearch-data: {}
-  mysql-data: {}
+  mysql-data:
+    external: true
+    name: ${MYSQL_DATA_VOLUME_NAME}
+  elasticsearch-data:
+    external: true
+    name: ${ELASTICSEARCH_DATA_VOLUME_NAME}
 services:
   api:
     <<: *x-api
@@ -36,7 +40,7 @@ services:
     <<: *x-api
     command: .dockerfiles/run-seed.sh
     volumes:
-      - ${VOLUME_SEED_DATA}:/seed
+      - ${SEED_DATA_VOLUME_PATH}:/seed
   database:
     image: mariadb
     command: --max_allowed_packet=160M --key_buffer_size=16M --max_binlog_size=100M
