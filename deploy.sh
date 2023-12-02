@@ -18,12 +18,12 @@ echo "Updated fetch-seed-data digest: $FETCH_SEED_DATA_DIGEST_UPDATED"
 echo "Running migrations..."
 docker compose up migrate
 
-# if [ "$FETCH_SEED_DATA_DIGEST_CURRENT" == "$FETCH_SEED_DATA_DIGEST_UPDATED" ]; then
-  # echo "Skipping seed, no new seed data available"
-# else
-  # echo "Running seed with new seed data..."
+if [ "$FETCH_SEED_DATA_DIGEST_CURRENT" == "$FETCH_SEED_DATA_DIGEST_UPDATED" ]; then
+  echo "Skipping seed, no new seed data available"
+else
+  echo "Running seed with new seed data..."
   docker compose up seed
-# fi
+fi
 
 echo "Stopping containers..."
 docker compose stop
