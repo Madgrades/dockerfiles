@@ -34,10 +34,8 @@ services:
     volumes:
       - seed-data:/seed
     depends_on:
-      database:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       fetch-seed-data:
         condition: service_completed_successfully
   api:
