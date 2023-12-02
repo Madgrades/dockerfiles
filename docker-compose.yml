@@ -1,7 +1,7 @@
 version: "3.9"
 x-api:
   &x-api
-  image: ghcr.io/madgrades/api.madgrades.com@sha256:cba55c72a5bb38d25cc918a9f00e5da5d3697004a995ed8896b5512fe24a3235
+  image: ghcr.io/madgrades/api.madgrades.com@sha256:706d9fa89b15a01106fba5d7eb736eed6073eac95a7ebd6e47ea390c17878996
   environment:
     GITHUB_KEY: ${GITHUB_KEY}
     GITHUB_SECRET: ${GITHUB_SECRET}
