@@ -43,6 +43,11 @@ services:
     command: .dockerfiles/run-api.sh
     ports:
       - '${PORT}:${PORT}'
+    healthcheck:
+      test: curl -s -f http://api:${PORT} >/dev/null || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 6
   database:
     image: mariadb:10.0
     command: --max_allowed_packet=1G
@@ -70,13 +75,29 @@ services:
       interval: 10s
       timeout: 10s
       retries: 6
+  frontend:
+    image: ghcr.io/madgrades/madgrades.com@sha256:60fb4d55eb693eb4eb7c29cfbf2760d2dd452a924138fbe870f960fa09d5806e
+    environment:
+      REACT_APP_MADGRADES_API: '${REACT_APP_MADGRADES_API}'
+      REACT_APP_URL: '${REACT_APP_URL}'
+      REACT_APP_MADGRADES_API_TOKEN: '${REACT_APP_MADGRADES_API_TOKEN}'
+      REACT_APP_GA_TRACKING_ID: '${REACT_APP_GA_TRACKING_ID}'
+      REACT_APP_GA4_TRACKING_ID: '${REACT_APP_GA4_TRACKING_ID}'
+      REACT_APP_UPTIME_ROBOT_API_KEY: '${REACT_APP_UPTIME_ROBOT_API_KEY}'
+      REACT_APP_ADSENSE_CLIENT: '${REACT_APP_ADSENSE_CLIENT}'
+      PORT: '${FRONTEND_PORT}'
+    ports:
+      - '${FRONTEND_PORT}:${FRONTEND_PORT}'
+    healthcheck:
+      test: curl -s -f http://frontend:${FRONTEND_PORT} >/dev/null || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 6
+
 volumes:
   mysql-data:
-    external: true
     name: ${MYSQL_DATA_VOLUME_NAME}
   elasticsearch-data:
-    external: true
     name: ${ELASTICSEARCH_DATA_VOLUME_NAME}
   seed-data:
-    external: true
     name: ${SEED_DATA_VOLUME_NAME}

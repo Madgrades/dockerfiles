@@ -5,7 +5,7 @@ Configurations for running the [Madgrades API](http://github.com/Madgrades/api.m
 ## Prerequisites
 
 * Docker / Docker Compose
-* [Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) with the "Authorization callback URL" set to `http://localhost:3000/auth/github/callback`. 
+* [Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) with the "Authorization callback URL" set to `http://localhost:8080/auth/github/callback`. 
 
 ## Instructions
 
@@ -13,40 +13,37 @@ Configurations for running the [Madgrades API](http://github.com/Madgrades/api.m
    Create a new `*.env` file (e.g. `prod.env`) based on the provided `.env.example`. The following steps and the GitHub callback URL above assume you leave the example defaults unchanged.
 
 1.
-   Create Docker volumes. This is helpful to persist data in between runs of the containers, and reuse volumes between containers.
-
-   ```bash
-   $ docker volume create madgrades-prod-mysql-data
-   $ docker volume create madgrades-prod-elasticsearch-data
-   $ docker volume create madgrades-prod-seed-data
-   ```
-
-2.
    Run all the services using configuration provided from the env file you created.
 
    ```bash
-   $ docker compose --env-file=prod.env up
+   $ docker compose --env-file=prod.env up --detach
    ```
 
    This initializes the databases, seeds them with data, and starts up the API.
 
-You can now access the API at the URL output by the command (e.g. `http://localhost:3000`). Optionally, use `up --detach` instead in order to detach and run the services in the background.
+You can now access the API (`http://localhost:8080` if you left the default settings). Opionally, do not use `--detach` in order to attach to the server.
+
+You can also access the frontend (`http://localhost:3000` if you left the default settings). Note that for the first run you will need to access the API, login with your GitHub account and get a Madgrades API token, and restart the frontend with that token set in the environment variables:
+
+```bash
+$ docker compose --env-file=.env down frontend
+$ docker compose --env-file=.env up frontend --detach
+```
 
 ## Notes
 
-### Starting the API alone
-
-Specifying `up` without the specific services to initialize means that the command will re-seed the database everytime it is run. It is better to start and stop the API alone without re-seeding data.
-
-```bash
-$ docker compose --env-file=prod.env up api
-```
-
 ### Re-seeding the databases
 
-If new data is available, re-seed the database by updating the image in the Docker compose configuration and running the seed service.
+If new data is available, re-seed the database by updating the image in the Docker compose configuration and running the seed service. This service will terminate after the seeding is completed.
 
 ```bash
 $ docker compose --env-file=prod.env up seed
 ```
 
+### Start the frontend and API without re-seeding
+
+Skip re-seeding the database by specifying the `frontend` and `api` services to start.
+
+```bash
+$ docker compose --env-file=prod.env up frontend api --detach
+```
