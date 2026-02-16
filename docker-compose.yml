@@ -1,7 +1,10 @@
 version: "3.9"
 x-api:
   &x-api
-  image: ghcr.io/madgrades/api.madgrades.com@sha256:8127a16117ebfebb6b2a1bde1f0765a6d431666f38e80796c3c63e1fd44f624b
+  image: ghcr.io/madgrades/api.madgrades.com@sha256:6ba8fb8d63578981b61407ec1b59c419fce6f857cf7643c83f18309fdbcb6f56
+  # build:
+  #   context: ../api.madgrades.com
+  #   dockerfile: Dockerfile
   environment:
     GITHUB_KEY: ${GITHUB_KEY}
     GITHUB_SECRET: ${GITHUB_SECRET}
