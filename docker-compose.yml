@@ -1,7 +1,7 @@
 version: "3.9"
 x-api:
   &x-api
-  image: ghcr.io/madgrades/api.madgrades.com@sha256:6ba8fb8d63578981b61407ec1b59c419fce6f857cf7643c83f18309fdbcb6f56
+  image: ghcr.io/madgrades/api.madgrades.comsha256:7bab2f94ed9611087af7ce584516ceab4f58eb44e9526bbdda1eace40999b913
   # build:
   #   context: ../api.madgrades.com
   #   dockerfile: Dockerfile
@@ -67,7 +67,7 @@ services:
       timeout: 10s
       retries: 6
   elasticsearch:
-    image: elasticsearch:6.8.22
+    image: elasticsearch:8.11.0
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
