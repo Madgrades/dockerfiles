@@ -1,7 +1,7 @@
 version: "3.9"
 x-api:
   &x-api
-  image: ghcr.io/madgrades/api.madgrades.comsha256:7bab2f94ed9611087af7ce584516ceab4f58eb44e9526bbdda1eace40999b913
+  image: ghcr.io/madgrades/api.madgrades.com@sha256:7bab2f94ed9611087af7ce584516ceab4f58eb44e9526bbdda1eace40999b913
   # build:
   #   context: ../api.madgrades.com
   #   dockerfile: Dockerfile
