@@ -28,7 +28,7 @@ services:
     <<: *x-api
     command: .dockerfiles/run-migrations.sh
   fetch-seed-data:
-    image: ghcr.io/madgrades/madgrades-data@sha256:8254a95d52594dc5f6c7d4f50842c76039b641cdf5572379a376105723dd6ab6
+    image: ghcr.io/madgrades/madgrades-data@sha256:23c83b157d10794af4f5d4c9768e89a7ba9f48afbbe63b377d3e43a9ba64749e
     volumes:
       - seed-data:/mnt
   seed:
